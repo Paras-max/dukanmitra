@@ -412,14 +412,12 @@ async function execute(
         t(lang, "restock", { qty: a.quantity, unit: a.unit, product: a.productName, stock }),
       );
     } else if (a.type === "expense") {
-      await sb
-        .from("expenses")
-        .insert({
-          owner_id: uid,
-          category: a.category,
-          description: a.description,
-          amount: a.amount,
-        });
+      await sb.from("expenses").insert({
+        owner_id: uid,
+        category: a.category,
+        description: a.description,
+        amount: a.amount,
+      });
       steps.push({ agent: "Finance", message: `Expense saved.`, level: "ok" });
       replies.push(t(lang, "expense", { amount: a.amount, category: a.category }));
     } else if (a.type === "credit" || a.type === "payment") {

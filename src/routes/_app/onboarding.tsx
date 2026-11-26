@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ function Onboarding() {
   const { user } = useAuth();
   const nav = useNavigate();
   const invalidate = useInvalidateAll();
+  const qc = useQueryClient();
   const [f, setF] = useState({ name: "", owner_name: "", city: "", phone: "" });
   const [lang, setLang] = useState<Lang>("hi");
   const [demo, setDemo] = useState(true);
@@ -41,6 +43,7 @@ function Onboarding() {
       toast.error(error.message);
       return;
     }
+    await qc.refetchQueries({ queryKey: ["shop"] });
     invalidate();
     toast.success("Your shop is ready!");
     nav({ to: "/dashboard" });

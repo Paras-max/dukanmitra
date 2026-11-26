@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { runCommand } from "@/lib/agents/agents.functions";
 import type { Lang } from "./use-voice";
@@ -19,6 +19,8 @@ const write = (q: Queued[]) => localStorage.setItem(KEY, JSON.stringify(q));
 export function useOfflineQueue(onSynced?: () => void) {
   const [online, setOnline] = useState(true);
   const [queue, setQueue] = useState<Queued[]>([]);
+  const onSyncedRef = useRef(onSynced);
+  onSyncedRef.current = onSynced;
 
   const sync = useCallback(async () => {
     const q = read();
@@ -40,9 +42,9 @@ export function useOfflineQueue(onSynced?: () => void) {
     setQueue(read());
     if (ok) {
       toast.success(`Synced ${ok} offline entr${ok > 1 ? "ies" : "y"}.`);
-      onSynced?.();
+      onSyncedRef.current?.();
     }
-  }, [onSynced]);
+  }, []);
 
   useEffect(() => {
     setOnline(navigator.onLine);
